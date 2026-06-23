@@ -197,38 +197,24 @@ Technical UI Execution: Executed high-fidelity UI designs for Web/App ecosystems
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
-   <script>
-  // 終極暴力覆寫：只要點到 Download CV 或帶有 framerusercontent 的 CV 連結一律攔截
-  document.addEventListener("DOMContentLoaded", function() {
-    function fixCVLinks() {
-      // 1. 抓取所有包含 Framer 錯誤 PDF 網址的連結並直接改掉
-      const links = document.querySelectorAll('a[href*="jKSkWAVbYKJJ6M"]');
-      links.forEach(link => {
-        link.setAttribute('href', 'CV_2026_Cindy.pdf');
-        link.setAttribute('download', 'CV_2026_Cindy.pdf');
-      });
-
-      // 2. 抓取所有寫著 "Download CV" 的文字，徹底斷開 Framer 的 JS 綁架
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(el => {
-        if (el.textContent && el.textContent.trim() === 'Download CV') {
-          const clickable = el.closest('a') || el.closest('.framer-7jGkj') || el;
-          clickable.removeAttribute('data-framer-page-link-current');
-          clickable.style.cursor = 'pointer';
-          clickable.onclick = function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            window.open('CV_2026_Cindy.pdf', '_blank');
-          };
-        }
-      });
+ <script>
+  // 終極全域點擊監聽器（完全無視 Framer 的任何底層 React/JS 事件綁架）
+  window.addEventListener('click', function(e) {
+    // 檢查點擊的目標元素或其父元素是否包含 "Download CV" 或 "Download"
+    const isCVButton = e.target.textContent && 
+                       (e.target.textContent.trim() === 'Download CV' || 
+                        e.target.textContent.trim() === 'Download');
+    
+    // 如果點到的是下載按鈕
+    if (isCVButton) {
+      e.preventDefault();        // 強制阻止瀏覽器預設行為
+      e.stopPropagation();       // 強制阻止事件傳遞給 Framer JS
+      e.stopImmediatePropagation(); // 強制阻止同一個元素上其他 Framer 腳本執行
+      
+      // 直接開啟你上傳到 GitHub 的本地履歷 PDF
+      window.open('CV_2026_Cindy.pdf', '_blank');
     }
-
-    // 網頁載入時執行一次
-    fixCVLinks();
-    // 延遲 500 毫秒再執行一次，防止 Framer 動態延遲生成
-    setTimeout(fixCVLinks, 500);
-  });
+  }, true); // 注意：這裡的 true 代表啟用「事件捕獲階段」攔截，會比 Framer 的腳本更快執行！
 </script>
 </body>
 </html>
