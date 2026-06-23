@@ -165,5 +165,29 @@
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
+    <script>
+  // 強制覆寫網頁中所有 Download CV 的點擊與跳轉事件
+  document.addEventListener("DOMContentLoaded", function() {
+    // 找出所有文字包含 "Download CV" 的元素
+    const elements = document.querySelectorAll('*');
+    elements.forEach(el => {
+      if (el.textContent && el.textContent.trim() === 'Download CV') {
+        // 往上尋找最近的點擊容器或本身
+        const clickable = el.closest('a') || el.closest('.framer-7jGkj') || el;
+        
+        // 移除所有可能干擾的動態點擊事件
+        clickable.removeAttribute('data-framer-page-link-current');
+        clickable.onclick = function(e) {
+          e.stopPropagation(); // 阻止 Framer 腳本往上傳播
+          e.preventDefault();  // 阻止 Framer 預設的跳轉
+          window.open('CV_2026_Cindy.pdf', '_blank'); // 強制在全新分頁開啟你的 GitHub PDF
+        };
+        
+        // 讓滑鼠移過去時顯示手指圖標
+        clickable.style.cursor = 'pointer';
+      }
+    });
+  });
+</script>
 </body>
 </html>
