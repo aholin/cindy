@@ -197,28 +197,37 @@ Technical UI Execution: Executed high-fidelity UI designs for Web/App ecosystems
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
-    <script>
-  // 強制覆寫網頁中所有 Download CV 的點擊與跳轉事件
+   <script>
+  // 終極暴力覆寫：只要點到 Download CV 或帶有 framerusercontent 的 CV 連結一律攔截
   document.addEventListener("DOMContentLoaded", function() {
-    // 找出所有文字包含 "Download CV" 的元素
-    const elements = document.querySelectorAll('*');
-    elements.forEach(el => {
-      if (el.textContent && el.textContent.trim() === 'Download CV') {
-        // 往上尋找最近的點擊容器或本身
-        const clickable = el.closest('a') || el.closest('.framer-7jGkj') || el;
-        
-        // 移除所有可能干擾的動態點擊事件
-        clickable.removeAttribute('data-framer-page-link-current');
-        clickable.onclick = function(e) {
-          e.stopPropagation(); // 阻止 Framer 腳本往上傳播
-          e.preventDefault();  // 阻止 Framer 預設的跳轉
-          window.open('CV_2026_Cindy.pdf', '_blank'); // 強制在全新分頁開啟你的 GitHub PDF
-        };
-        
-        // 讓滑鼠移過去時顯示手指圖標
-        clickable.style.cursor = 'pointer';
-      }
-    });
+    function fixCVLinks() {
+      // 1. 抓取所有包含 Framer 錯誤 PDF 網址的連結並直接改掉
+      const links = document.querySelectorAll('a[href*="jKSkWAVbYKJJ6M"]');
+      links.forEach(link => {
+        link.setAttribute('href', 'CV_2026_Cindy.pdf');
+        link.setAttribute('download', 'CV_2026_Cindy.pdf');
+      });
+
+      // 2. 抓取所有寫著 "Download CV" 的文字，徹底斷開 Framer 的 JS 綁架
+      const allElements = document.querySelectorAll('*');
+      allElements.forEach(el => {
+        if (el.textContent && el.textContent.trim() === 'Download CV') {
+          const clickable = el.closest('a') || el.closest('.framer-7jGkj') || el;
+          clickable.removeAttribute('data-framer-page-link-current');
+          clickable.style.cursor = 'pointer';
+          clickable.onclick = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open('CV_2026_Cindy.pdf', '_blank');
+          };
+        }
+      });
+    }
+
+    // 網頁載入時執行一次
+    fixCVLinks();
+    // 延遲 500 毫秒再執行一次，防止 Framer 動態延遲生成
+    setTimeout(fixCVLinks, 500);
   });
 </script>
 </body>
