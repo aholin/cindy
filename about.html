@@ -124,17 +124,15 @@
     
     <!-- End of headEnd -->
     <style>
-  /* 強制隱藏 Framer 的 Made in Framer 標誌與 Edit Content 按鈕 */
+  /* 精準隱藏 Made in Framer 標誌與 Edit 編輯列 */
   [data-framer-generated], 
   .__framer-badge, 
   #framer-badge,
   div[style*="framer.com"],
   div[style*="framer.website"],
-  /* 以下為針對 Edit Content 按鈕的防禦設定 */
-  [data-framer-overlay],
-  div[class*="edit-content"],
-  div[id*="edit-content"],
-  a[href*="framer.com/edit"] {
+  /* 根據截圖抓出的精準 ID */
+  #__framer-editorbar-container,
+  #__framer-editorbar {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
